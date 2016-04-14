@@ -43,7 +43,9 @@ public class FileLoaderTest {
 
         //checking
         FileLoader fileLoader = new FileLoader();
-        BlockingQueue<File> fileQueue = fileLoader.loadFile(tmpDir,FileLoader.LoadOption.FILE, new FilePathValidator(Pattern.compile("^$")));
+        BlockingQueue<File> fileQueue = new LinkedBlockingQueue<File>();
+        fileLoader.loadFile(tmpDir,FileLoader.LoadOption.FILE,
+                new FilePathValidator(Pattern.compile("^$")), fileQueue);
         Assert.assertEquals(3, fileQueue.size());
     }
 
@@ -63,7 +65,8 @@ public class FileLoaderTest {
 
         //checking
         FileLoader fileLoader = new FileLoader();
-        BlockingQueue<File> fileQueue = fileLoader.loadFile(tmpDir,FileLoader.LoadOption.FILE, new FilePathValidator(Pattern.compile("^$")));
+        BlockingQueue<File> fileQueue = new LinkedBlockingQueue<File>();
+        fileLoader.loadFile(tmpDir,FileLoader.LoadOption.FILE, new FilePathValidator(Pattern.compile("^$")),fileQueue);
         Assert.assertEquals(6, fileQueue.size());
     }
 
@@ -75,7 +78,8 @@ public class FileLoaderTest {
         File.createTempFile("fileName", ".log",tmpDir);
 
         FileLoader fileLoader = new FileLoader();
-        BlockingQueue<File> fileQueue = fileLoader.loadFile(tmpDir,FileLoader.LoadOption.FILE, new FilePathValidator(Pattern.compile(".+\\.tmp")));
+        BlockingQueue<File> fileQueue = new LinkedBlockingQueue<File>();
+        fileLoader.loadFile(tmpDir,FileLoader.LoadOption.FILE, new FilePathValidator(Pattern.compile(".+\\.tmp")), fileQueue);
         Assert.assertEquals(2, fileQueue.size());
     }
 
@@ -86,7 +90,8 @@ public class FileLoaderTest {
         new File(tmpDir,"sub1").mkdir();
 
         FileLoader fileLoader = new FileLoader();
-        BlockingQueue<File> fileQueue = fileLoader.loadFile(tmpDir,FileLoader.LoadOption.DIRECTORY, new FilePathValidator(Pattern.compile("^$")));
+        BlockingQueue<File> fileQueue = new LinkedBlockingQueue<File>();
+        fileLoader.loadFile(tmpDir,FileLoader.LoadOption.DIRECTORY, new FilePathValidator(Pattern.compile("^$")), fileQueue);
         Assert.assertEquals(3, fileQueue.size());
     }
 

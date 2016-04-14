@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -91,7 +92,7 @@ public class DirectorySource extends AbstractSource implements Configurable, Eve
                     .decodeErrorPolicy(decodeErrorPolicy)
                     .executor(executor)
                     .build();
-            reader.init();
+
         } catch (Exception ex) {
             throw new FlumeException("Error instantiating Directory source",
                     ex);
@@ -103,6 +104,15 @@ public class DirectorySource extends AbstractSource implements Configurable, Eve
         super.start();
         logger.debug("DirectorySource source started");
         sourceCounter.start();
+
+        //init after runner starts
+        try {
+            reader.init();
+        } catch (Exception e) {
+            logger.error("failed to init reader",e);
+            throw new FlumeException("Error instantiating Directory source",
+                    e);
+        }
     }
 
     @Override

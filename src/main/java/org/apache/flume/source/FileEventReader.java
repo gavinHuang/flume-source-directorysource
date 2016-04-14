@@ -44,7 +44,7 @@ public class FileEventReader implements ReliableEventReader {
     ExecutorService executor;
 
     //queue to store files that been newly created/discovered and thus need to be ingested.
-    private final BlockingQueue<File> pendingFileQueue = new LinkedBlockingQueue<File>();
+    private final BlockingQueue<File> pendingFileQueue = new LinkedBlockingQueue<File>(100);
 
     //starts from beginning will cause list the
     private DirectorySource.StartFrom startsFrom = DirectorySource.StartFrom.BEGINNING;
@@ -151,8 +151,8 @@ public class FileEventReader implements ReliableEventReader {
                 public void run() {
                     FileLoader existingFileLoader = new FileLoader();
                     try {
-                        pendingFileQueue.addAll(existingFileLoader.loadFile(watchDirectory,
-                                FileLoader.LoadOption.FILE, filePathValidator));
+                        existingFileLoader.loadFile(watchDirectory,
+                                FileLoader.LoadOption.FILE, filePathValidator,pendingFileQueue);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -191,7 +191,7 @@ public class FileEventReader implements ReliableEventReader {
         List<Event> events = des.readEvents(numEvents);
 
         while (events.isEmpty()) {
-            logger.info("Rolling to the next file...");
+            logger.warn("Rolling to the next file...");
             retireCurrentFile();
             currentFile = getNextFile();
             if (!currentFile.isPresent()) {

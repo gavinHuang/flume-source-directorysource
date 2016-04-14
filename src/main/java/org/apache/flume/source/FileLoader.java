@@ -40,9 +40,8 @@ public class FileLoader{
         ALL
     }
 
-    public BlockingQueue<File> loadFile(File root, final LoadOption loadOption,
-                         final FilePathValidator filePathValidator) throws IOException {
-        final BlockingQueue<File> fileQueue = new LinkedBlockingDeque<File>();
+    public void loadFile(File root, final LoadOption loadOption,
+                         final FilePathValidator filePathValidator, final BlockingQueue<File> fileQueue) throws IOException {
         Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>(){
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
@@ -75,6 +74,6 @@ public class FileLoader{
                 return FileVisitResult.CONTINUE;
             }
         });
-        return fileQueue;
+        //return fileQueue;
     }
 }

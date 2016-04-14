@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
@@ -55,8 +56,9 @@ public class FileWatcher implements Runnable{
         }
 
         FileLoader fileLoader = new FileLoader();
-        BlockingQueue<File> files = fileLoader.loadFile(watchDirectory,
-                FileLoader.LoadOption.DIRECTORY, filePathValidator);
+        BlockingQueue<File> files = new LinkedBlockingDeque<File>();
+        fileLoader.loadFile(watchDirectory,
+                FileLoader.LoadOption.DIRECTORY, filePathValidator, files);
 
         for(File file : files){
             file.toPath().register(watcher, ENTRY_CREATE);
