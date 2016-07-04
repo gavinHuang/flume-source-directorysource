@@ -61,6 +61,7 @@ public class FileWatcher implements Runnable{
                 FileLoader.LoadOption.DIRECTORY, filePathValidator, files);
 
         for(File file : files){
+            logger.info("watching:"+file.getAbsolutePath());
             file.toPath().register(watcher, ENTRY_CREATE);
         }
     }
@@ -80,7 +81,8 @@ public class FileWatcher implements Runnable{
                     Path parentPath = (Path)watchKey.watchable();
                     Path child = parentPath.resolve(filename);
                     File childFile = child.toFile();
-                    if (filePathValidator.validateFile(childFile)){
+                    if (!filePathValidator.validateFile(childFile)){
+                        logger.warn("ignored file found:"+childFile.getAbsolutePath());
                         continue;
                     }
                     if (childFile.isDirectory()){
@@ -90,6 +92,7 @@ public class FileWatcher implements Runnable{
                             logger.error("failed to watching dir:", x);
                         }
                     }else{
+                        logger.warn("new file found:"+childFile.getAbsolutePath());
                         pendingFileQueue.put(childFile);
                     }
                 }
